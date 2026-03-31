@@ -1,0 +1,13 @@
+# Laporan Praktikum Sistem Tertanam - Modul 1
+
+## Percobaan 1A: Percabangan (If-Else)
+
+### Jawaban Pertanyaan Praktikum
+
+**1. Pada kondisi apa program masuk ke blok `if`?**
+
+Berdasarkan struktur kode program pada Percobaan 1A, program akan masuk dan mengeksekusi instruksi di dalam blok `if` apabila kondisi logika berikut terpenuhi:
+
+```c
+if (timeDelay <= 100)
+
