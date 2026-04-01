@@ -7,7 +7,7 @@
 * **Fakultas** : Teknik 
 * **Universitas** : Universitas Jenderal Soedirman 
 ---
-### 📂 Informasi Project
+### Informasi Project
 * **Mata Kuliah** : Sistem Tertanam dan Mikrokontroler 
 * **Topik Percobaan** : Implementasi Logika Percabangan (if-else) dan Perulangan (for) pada Arduino
 * **Repositori** : (https://github.com/Ismafdz/PRAKPST_H1D023107)
