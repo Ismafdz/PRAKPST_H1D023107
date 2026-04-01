@@ -1,0 +1,26 @@
+const int ledPin = 6;   
+int timeDelay = 100;     
+bool arahMelambat = true;
+
+void setup() {
+  pinMode(ledPin, OUTPUT); 
+}
+
+void loop() {
+  digitalWrite(ledPin, HIGH); 
+  delay(timeDelay);           
+  digitalWrite(ledPin, LOW);  
+  delay(timeDelay);          
+
+  if (arahMelambat) {
+    timeDelay += 450;        
+    
+    if (timeDelay > 1000) {  
+      timeDelay = 1000;       
+      arahMelambat = false;  
+    }
+  } else {
+    digitalWrite(ledPin, LOW); 
+    while(true);             
+  }
+}
