@@ -9,7 +9,7 @@
 ---
 ### Informasi Project
 * **Mata Kuliah** : Sistem Tertanam dan Mikrokontroler 
-* **Topik Percobaan** : Implementasi Logika Percabangan (if-else) dan Perulangan (for) pada Arduino
+* **Topik Percobaan** : Implementasi Logika pada Arduino UNO
 * **Repositori** : (https://github.com/Ismafdz/PRAKPST_H1D023107)
 ---
 > **Catatan:** Laporan ini disusun sebagai bagian dari pemenuhan tugas praktikum untuk memahami pengendalian perangkat keras (LED) menggunakan struktur kontrol pemrograman C++ pada platform Arduino Uno.
