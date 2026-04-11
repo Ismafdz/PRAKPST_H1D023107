@@ -4,6 +4,10 @@
 
 ### 1. Gambarkan rangkaian schematic yang digunakan pada percobaan!
 (Gambar Wiring Diagram Seven Segment)
+
+![Wiring Diagram Seven Segment](https://github.com/user-attachments/assets/7a24bf71-94c9-4f8f-9633-66f72969f86a)
+
+
 Rangkaian terdiri dari satu unit Seven Segment Display yang disusun pada breadboard dan dihubungkan ke unit mikrokontroler Arduino Uno. Setiap segmen (a-g dan dp) dilengkapi dengan resistor pembatas arus 220Ohm untuk menjaga keamanan komponen sesuai standar yang ditetapkan dalam modul. Berbeda dengan rangkaian standar, pada percobaan ini digunakan konfigurasi Common Anode, di mana jalur common (pin tengah) dihubungkan ke pin 5V Arduino.
 Berikut adalah detail koneksi yang diimplementasikan pada rangkaian tersebut:
 | Komponen     | Pin Arduino  | Keterangan                                      |
@@ -17,6 +21,7 @@ Berikut adalah detail koneksi yang diimplementasikan pada rangkaian tersebut:
 | Segmen g     | Pin Digital 9  | Terhubung melalui Resistor 220 Ohm             |
 | Segmen dp    | Pin Digital 4  | Terhubung melalui Resistor 220 Ohm             |
 | Common Rail  | 5V            | Semua Anoda LED terhubung ke sumber tegangan 5V |
+
 Rangkaian ini telah menggunakan resistor 220 Ohm pada setiap jalur segmen. Hal ini berfungsi sebagai pembatas arus (current limiter) agar LED tidak rusak akibat tegangan berlebih dari pin digital Arduino. Penggunaan konfigurasi Common Anode ini mengharuskan logika program menjadi Active Low, di mana segmen akan menyala ketika pin digital memberikan logika LOW (0V) sehingga terjadi perbedaan potensial dengan sumber 5V pada common rail.
 
 ### 2. Apa yang terjadi jika nilai num lebih dari 15?
@@ -24,8 +29,11 @@ Dalam program ini, kita membuat daftar "resep" pola angka (0 sampai F) di dalam 
 
 ### 3. Apakah program ini menggunakan common cathode atau common anode? Jelaskan alasanya!
 Berdasarkan rangkaian yang telah dibuat, sistem ini menggunakan jenis Common Anode. Hal ini dapat dibuktikan melalui dua alasan teknis berikut:
+
 Koneksi Fisik (Hardware): Jalur common (pin tengah) pada seven segment dihubungkan langsung ke pin 5V Arduino, bukan ke GND. Ini artinya semua anoda (kutub positif) LED di dalam seven segment digabungkan ke satu sumber tegangan.
+
 Logika Program (Software): Karena common-nya sudah mendapat tegangan 5V, maka untuk menyalakan lampu, pin digital Arduino harus mengeluarkan logika LOW (0V) agar terjadi perbedaan potensial. Logika "nyala saat LOW" ini adalah ciri khas dari konfigurasi Common Anode.
+
 Sederhananya, jika pada common cathode kita memberikan tegangan untuk menyalakan lampu, pada Common Anode kita justru "menarik" tegangan tersebut ke arah 0V agar arus bisa mengalir dan LED menyala.
 
 ### 4. Modifikasi program agar tampilan berjalan dari F ke 0 dan berikan penjelasan disetiap baris kode nya dalam bentuk README.md!
