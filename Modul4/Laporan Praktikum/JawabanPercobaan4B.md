@@ -28,3 +28,45 @@ Untuk menghubungkan kedua rentang yang berbeda ini di dalam kode program secara 
 Tujuan utama dari terciptanya hubungan ini adalah agar pengguna dapat mengontrol perangkat output, seperti kecerahan LED atau kecepatan motor, secara presisi menggunakan input analog dari dunia nyata. Penyesuaian skala ini sangat krusial karena tanpa adanya sinkronisasi antara input 10-bit dan output 8-bit, nilai ADC yang terlalu besar akan menyebabkan sistem PWM mengalami kebingungan atau kesalahan logika. Hal ini dikarenakan nilai output yang diminta akan melebihi batas maksimal yang mampu dihasilkan oleh pin digital Arduino, sehingga konversi yang tepat memastikan sistem tetap bekerja secara stabil.
 
 ### 3. Modifikasilah program berikut agar LED hanya menyala pada rentang kecerahan sedang, yaitu hanya ketika nilai PWM berada pada rentang 50 sampai 200. Jelaskan program pada file README.md.
+```cpp
+#include <Arduino.h>
+
+// --- Pengaturan Pin ---
+const int potPin = A0;   // Input dari potensiometer
+const int ledPin = 9;    // Output ke LED (pin PWM)
+
+// --- Variabel Simpan Data ---
+int nilaiADC = 0;  // Untuk menyimpan angka dari sensor (0-1023)
+int pwm = 0;       // Untuk menyimpan hasil konversi (0-255)
+
+void setup() {
+  pinMode(ledPin, OUTPUT);  // Set LED sebagai output
+  Serial.begin(9600);       // Mulai komunikasi ke laptop
+}
+
+void loop() {
+  // 1. Ambil data mentah dari potensiometer
+  nilaiADC = analogRead(potPin); 
+
+  // 2. Ubah skala 0-1023 jadi 0-255 agar cocok untuk PWM
+  pwm = map(nilaiADC, 0, 1023, 0, 255); 
+
+  // 3. Logika filter: Hanya menyala jika di rentang 50 sampai 200
+  if (pwm >= 50 && pwm <= 200) {
+    // Kalau masuk rentang, diberi tenaga ke LED sesuai putaran
+    analogWrite(ledPin, pwm); 
+  } 
+  else {
+    // Kalau di bawah 50 atau di atas 200, memaksa LED mati
+    analogWrite(ledPin, 0); 
+  }
+
+  // 4. Pantau angka di Serial Monitor
+  Serial.print("ADC: ");
+  Serial.print(nilaiADC);
+  Serial.print(" | PWM: ");
+  Serial.println(pwm);
+
+  delay(50); // memberi jeda
+}
+```
