@@ -1,58 +1,72 @@
 ```cpp
-#include <Arduino.h>
+#include <Arduino.h> 
 
-// --- Pengaturan Pin ---
-const int potPin = A0;   // Input dari potensiometer
-const int ledPin = 9;    // Output ke LED (pin PWM)
+// ===================== PIN SETUP =====================
+const int potPin = A0;   // Pin analog untuk baca potensiometer
+const int ledPin = 9;    // Pin digital PWM untuk kontrol LED
 
-// --- Variabel Simpan Data ---
-int nilaiADC = 0;  // Untuk menyimpan angka dari sensor (0-1023)
-int pwm = 0;       // Untuk menyimpan hasil konversi (0-255)
+// ===================== VARIABEL =====================
+int nilaiADC = 0;  // Tempat simpan data mentah (0-1023)
+int pwm = 0;       // Tempat simpan hasil konversi (0-255)[cite: 1]
 
 void setup() {
-  pinMode(ledPin, OUTPUT);  // Set LED sebagai output
-  Serial.begin(9600);       // Mulai komunikasi ke laptop
+  // Atur pin LED sebagai output arus[cite: 1]
+  pinMode(ledPin, OUTPUT); 
+
+  // Mulai komunikasi ke Serial Monitor (kecepatan 9600)[cite: 1]
+  Serial.begin(9600); 
 }
 
 void loop() {
-  // 1. Ambil data mentah dari potensiometer
+  // 1. Baca nilai analog dari potensiometer[cite: 1]
   nilaiADC = analogRead(potPin); 
 
-  // 2. Ubah skala 0-1023 jadi 0-255 agar cocok untuk PWM
+  // 2. Skalasi: Ubah rentang ADC (0-1023) jadi rentang PWM (0-255)[cite: 1]
   pwm = map(nilaiADC, 0, 1023, 0, 255); 
 
-  // 3. Logika filter: Hanya menyala jika di rentang 50 sampai 200
+  // 3. LOGIKA MODIFIKASI: Filter rentang 50 sampai 200[cite: 1]
   if (pwm >= 50 && pwm <= 200) {
-    // Kalau masuk rentang, diberi tenaga ke LED sesuai putaran
+    // Kalau masuk rentang sedang, LED nyala sesuai putaran[cite: 1]
     analogWrite(ledPin, pwm); 
   } 
   else {
-    // Kalau di bawah 50 atau di atas 200, memaksa LED mati
+    // Kalau di luar rentang, paksa LED mati (0)[cite: 1]
     analogWrite(ledPin, 0); 
   }
 
-  // 4. Pantau angka di Serial Monitor
+  // 4. Monitoring data ke layar laptop[cite: 1]
   Serial.print("ADC: ");
-  Serial.print(nilaiADC);
-  Serial.print(" | PWM: ");
-  Serial.println(pwm);
+  Serial.print(nilaiADC); 
 
-  delay(50); // memberi jeda
+  Serial.print(" | PWM: ");
+  Serial.println(pwm); 
+
+  // Jeda dikit supaya pembacaan data stabil[cite: 1]
+  delay(50); 
 }
 ```
 
-Untuk menentukan agar motor servo hanya bergerak dalam rentang terbatas 30° hingga 150°, bagian yang dimodifikasi bukanlah pada struktur if, melainkan pada parameter fungsi map().
-
-Berikut adalah penjelasan bagian kodenya:
-
-Modifikasi pada Fungsi Scaling (map)
-Dalam aturan pemrograman Arduino, fungsi map() digunakan untuk menyelaraskan rentang nilai input ke rentang nilai output yang diinginkan. Untuk membatasi gerak servo, maka bisa dengan mengubah parameter tujuan pada fungsi tersebut menjadi:
-
+Pada kode asli, nilai PWM langsung dikirim ke LED menggunakan analogWrite(ledPin, pwm) tanpa filter. Dalam modifikasi, struktur kontrol if-else untuk memeriksa nilai variabel pwm sebelum dikirim ke pin output.
 ```cpp
-// Sebelum: pos = map(val, 0, 1023, 0, 180);
-pos = map(val, 0, 1023, 30, 150);
+if (pwm >= 50 && pwm <= 200) { 
+    // Bagian ini adalah 'filter' untuk rentang sedang
+    analogWrite(ledPin, pwm); 
+} else {
+    // Bagian ini untuk memastikan LED mati di luar rentang
+    analogWrite(ledPin, 0); 
+}
 ```
 
-(nilai_input, min_input, max_input, min_output, max_output). Dengan mengganti angka 0 menjadi 30 dan 180 menjadi 150, kita secara otomatis memerintahkan sistem untuk "memadatkan" seluruh jangkauan putaran potensiometer hanya ke dalam ruang gerak 120 derajat saja.
+Bagian yang paling krusial dalam modifikasi ini adalah penggunaan operator &&. Operator ini menetapkan aturan bahwa LED hanya akan menyala jika dua syarat terpenuhi secara bersamaan:
+- Nilai PWM harus lebih besar atau sama dengan 50.  
+- Nilai PWM harus lebih kecil atau sama dengan 200.
 
-Meskipun potensiometer diputar maksimal dari ujung ke ujung (ADC 0–1023), secara matematis sistem akan menghitung ulang nilainya agar titik terendah (0) menghasilkan sudut 30° dan titik tertinggi (1023) menghasilkan sudut 150°. Hal ini memastikan pergerakan servo tetap halus dan proporsional terhadap putaran sensor.
+Jika nilai PWM adalah 40 (terlalu rendah) atau 210 (terlalu tinggi), maka pernyataan tersebut bernilai salah (false), sehingga kode di dalam if dilewati.
+
+Modifikasi juga terletak pada bagian else. Di sini, memberikan perintah analogWrite(ledPin, 0). Aturan ini sangat penting karena tanpa instruksi else, LED tidak akan padam secara otomatis saat nilai PWM keluar dari rentang 50-200; LED justru akan tetap menyala pada tingkat kecerahan terakhirnya.
+
+**Alur Kerja Program Hasil Modifikasi:**
+1. Pembacaan: Arduino membaca nilai potensiometer (0–1023) melalui analogRead().  
+2. Konversi: Nilai tersebut diubah menjadi skala PWM (0–255) melalui fungsi map().  
+3. Validasi (Modifikasi Utama): Sistem mengecek apakah hasil konversi berada di angka 50 sampai 200.  
+4. Eksekusi: Jika masuk rentang, LED menyala sesuai tingkat kecerahan dari potensiometer. Jika tidak masuk rentang, LED dipaksa mati (0).
