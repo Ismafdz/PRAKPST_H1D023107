@@ -1,4 +1,4 @@
-# Modul 3 ADC PWM
+# Modul 4 ADC PWM
 
 ## Jawaban Pertanyaan Percobaan 4A : Analog To Digital Converter (ADC)
 
@@ -18,3 +18,51 @@ Alasannya yaitu:
 - Kemudahan Pemrograman: Tanpa fungsi map(), pemrogram harus membuat rumus matematikanya sendiri (seperti: (nilai_adc / 1023.0) * 180). Fungsi map() menyederhanakan proses ini sehingga kode menjadi lebih bersih, mudah dibaca, dan meminimalisir kesalahan logika dalam perhitungan konversi data sensor ke parameter kontrol perangkat output.
 
 ### 3. Modifikasi program berikut agar servo hanya bergerak dalam rentang 30° hingga 150°, meskipun potensiometer tetap memiliki rentang ADC 0–1023. Jelaskan program pada file README.md
+```cpp
+#include <Servo.h> // Memasukkan library untuk mengontrol servo motor
+
+Servo myservo; // Membuat objek servo
+
+// ===================== PIN SETUP =====================
+const int potensioPin = A0; // Pin analog A0 untuk pembacaan potensiometer
+const int servoPin = 9;     // Pin digital 9 (PWM) untuk output ke servo
+
+// ===================== VARIABEL =====================
+int pos = 0; // Variabel untuk menyimpan hasil konversi sudut (0-180)[cite: 1]
+int val = 0; // Variabel untuk menyimpan nilai mentah ADC (0-1023)[cite: 1]
+
+void setup() {
+  // Menghubungkan objek servo ke pin yang ditentukan (pin 9)[cite: 1]
+  myservo.attach(servoPin); 
+
+  // Mengaktifkan komunikasi serial dengan baud rate 9600[cite: 1]
+  Serial.begin(9600); 
+}
+
+void loop() {
+  // ===================== PEMBACAAN ADC =====================
+  // Membaca tegangan dari potensiometer (hasilnya angka 0-1023)[cite: 1]
+  val = analogRead(potensioPin); 
+
+  // ===================== KONVERSI DATA =====================
+  // MODIFIKASI: Memetakan nilai ADC (0-1023) ke rentang sudut baru (30-150)[cite: 1]
+  // Format: map(nilai, dariRendah, dariTinggi, keRendah, keTinggi)[cite: 1]
+  pos = map(val, 0, 1023, 30, 150); 
+
+  // ===================== OUTPUT SERVO =====================
+  // Menggerakkan poros servo ke sudut yang sudah dibatasi (30-150 derajat)[cite: 1]
+  myservo.write(pos); 
+
+  // ===================== MONITORING DATA =====================
+  // Menampilkan data pembacaan dan hasil konversi ke Serial Monitor[cite: 1]
+  Serial.print("ADC Potensio: ");
+  Serial.print(val); 
+
+  Serial.print(" | Sudut Servo: ");
+  Serial.println(pos); 
+
+  // ===================== STABILISASI =====================
+  // Jeda waktu agar gerakan mekanis servo lebih stabil dan tidak bergetar[cite: 1]
+  delay(15); 
+}
+```
