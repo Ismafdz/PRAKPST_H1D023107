@@ -1,40 +1,45 @@
-#include <Arduino.h>
+#include <Arduino.h> 
 
-// --- Pengaturan Pin ---
-const int potPin = A0;   // Input dari potensiometer
-const int ledPin = 9;    // Output ke LED (pin PWM)
+// ===================== PIN SETUP =====================
+const int potPin = A0;   // Pin analog untuk baca potensiometer
+const int ledPin = 9;    // Pin digital PWM untuk kontrol LED
 
-// --- Variabel Simpan Data ---
-int nilaiADC = 0;  // Untuk menyimpan angka dari sensor (0-1023)
-int pwm = 0;       // Untuk menyimpan hasil konversi (0-255)
+// ===================== VARIABEL =====================
+int nilaiADC = 0;  // Tempat simpan data mentah (0-1023)
+int pwm = 0;       // Tempat simpan hasil konversi (0-255)[cite: 1]
 
 void setup() {
-  pinMode(ledPin, OUTPUT);  // Set LED sebagai output
-  Serial.begin(9600);       // Mulai komunikasi ke laptop
+  // Atur pin LED sebagai output arus[cite: 1]
+  pinMode(ledPin, OUTPUT); 
+
+  // Mulai komunikasi ke Serial Monitor (kecepatan 9600)[cite: 1]
+  Serial.begin(9600); 
 }
 
 void loop() {
-  // 1. Ambil data mentah dari potensiometer
+  // 1. Baca nilai analog dari potensiometer[cite: 1]
   nilaiADC = analogRead(potPin); 
 
-  // 2. Ubah skala 0-1023 jadi 0-255 agar cocok untuk PWM
+  // 2. Skalasi: Ubah rentang ADC (0-1023) jadi rentang PWM (0-255)[cite: 1]
   pwm = map(nilaiADC, 0, 1023, 0, 255); 
 
-  // 3. Logika filter: Hanya menyala jika di rentang 50 sampai 200
+  // 3. LOGIKA MODIFIKASI: Filter rentang 50 sampai 200[cite: 1]
   if (pwm >= 50 && pwm <= 200) {
-    // Kalau masuk rentang, diberi tenaga ke LED sesuai putaran
+    // Kalau masuk rentang sedang, LED nyala sesuai putaran[cite: 1]
     analogWrite(ledPin, pwm); 
   } 
   else {
-    // Kalau di bawah 50 atau di atas 200, memaksa LED mati
+    // Kalau di luar rentang, paksa LED mati (0)[cite: 1]
     analogWrite(ledPin, 0); 
   }
 
-  // 4. Pantau angka di Serial Monitor
+  // 4. Monitoring data ke layar laptop[cite: 1]
   Serial.print("ADC: ");
-  Serial.print(nilaiADC);
-  Serial.print(" | PWM: ");
-  Serial.println(pwm);
+  Serial.print(nilaiADC); 
 
-  delay(50); // memberi jeda
+  Serial.print(" | PWM: ");
+  Serial.println(pwm); 
+
+  // Jeda dikit supaya pembacaan data stabil[cite: 1]
+  delay(50); 
 }
